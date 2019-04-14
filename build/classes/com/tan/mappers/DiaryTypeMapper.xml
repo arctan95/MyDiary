@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tan.dao.DiaryTypeDao">
+	
+	<select id="diaryTypeList" resultType="DiaryType">
+		select * from t_diaryType
+	</select>
+	
+	<select id="diaryTypeCountList" resultType="DiaryType">
+		SELECT diaryTypeId,typeName,COUNT(diaryId) as diaryCount FROM t_diary RIGHT JOIN t_diaryType ON t_diary.typeId=t_diaryType.diaryTypeId GROUP BY typeName
+	</select>
+	
+	<select id="diaryTypeShow" parameterType="Integer" resultType="DiaryType">
+		SELECT * from t_diaryType where diaryTypeId=#{diaryTypeId}
+	</select>
+	
+	<insert id="addDiaryType" parameterType="DiaryType">
+		insert into t_diaryType values(null,#{typeName})
+	</insert>
+	
+	<update id="updateDiaryType" parameterType="DiaryType">
+		update t_diaryType set typeName=#{typeName} where diaryTypeId=#{diaryTypeId}
+	</update>
+	
+	<delete id="deleteDiaryType" parameterType="int">
+		delete from t_diaryType where diaryTypeId=#{diaryTypeId}
+	</delete>
+</mapper> 

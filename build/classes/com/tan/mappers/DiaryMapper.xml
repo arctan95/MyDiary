@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tan.dao.DiaryDao">
+
+	<!-- <resultMap type="Diary" id="DiaryResult">
+		<id property="diaryId" column="diaryId"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="typeId" column="typeId"/>
+		<result property="typeName" column="typeName"/>
+		<result property="releaseDate" column="releaseDate"/>
+	</resultMap> -->
+	
+	<!-- 主页日记列表 -->
+	<select id="diaryList" parameterType="Map" resultType="Diary">
+		select * from t_diary t1,t_diarytype t2 where t1.typeId=t2.diaryTypeId
+		<if test="title!=null and title!=''">
+			and t1.title like #{title}
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			and t1.typeId like #{typeId}
+		</if>
+		<if test="releaseDateStr!=null and releaseDateStr!=''">
+			and DATE_FORMAT(t1.releaseDate,'%Y年%m月')=#{releaseDateStr}
+		</if>
+		order by t1.releaseDate desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<!-- 日记总数 -->
+	<select id="diaryCount" parameterType="Map" resultType="int">
+		select count(*) as total from t_diary t1,t_diarytype t2 where t1.typeId=t2.diaryTypeId
+		<if test="title!=null and title!=''">
+			and t1.title like #{title}
+		</if>
+		<if test="typeId!=null and typeId!=''">
+			and t1.typeId like #{typeId}
+		</if>
+		<if test="releaseDateStr!=null and releaseDateStr!=''">
+			and DATE_FORMAT(t1.releaseDate,'%Y年%m月')=#{releaseDateStr}
+		</if>
+	</select>
+	
+	<!-- 日记详情页 -->
+	<select id="diaryShow" parameterType="Integer" resultType="Diary">
+		select * from t_diary t1,t_diarytype t2 where t1.typeId=t2.diaryTypeId and t1.diaryId=#{diaryId}
+	</select>
+	
+	<!-- 添加日记 -->
+	<insert id="addDiary" parameterType="Diary">
+		insert into t_diary values(null,#{title},#{content},#{typeId},now())
+	</insert>
+	<!-- 修改日记 -->
+	<update id="updateDiary" parameterType="Diary">
+		update t_diary set title=#{title},content=#{content},typeId=#{typeId},releaseDate=now() where diaryId=#{diaryId}
+	</update>
+	<!-- 删除日记 -->
+	<delete id="deleteDiary" parameterType="int">
+		delete from t_diary where diaryId=#{id}
+	</delete>
+	
+	<!-- 日记发布日期 -->
+	<select id="diaryCountList" resultType="Diary">
+		SELECT DATE_FORMAT(releaseDate,'%Y年%m月') AS releaseDateStr,COUNT(*) AS diaryCount FROM t_diary GROUP BY DATE_FORMAT(releaseDate,'%Y年%m月') ORDER BY DATE_FORMAT(releaseDate,'%Y年%m月') desc
+	</select>
+	
+	<select id="existDiaryWithTypeId" parameterType="Integer" resultType="int">
+		select count(*) from t_diary where typeId=#{typeId}
+	</select>
+</mapper> 

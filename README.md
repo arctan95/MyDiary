@@ -1,2 +1,2 @@
 # MyDiary
-This is the first project made by me
+This is my first project
